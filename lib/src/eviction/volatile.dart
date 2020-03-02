@@ -2,8 +2,6 @@ import 'package:flutter_memory_cache/src/cache/cache_entry.dart';
 import 'package:flutter_memory_cache/src/eviction/eviction.dart';
 
 class VolatileEviction extends Eviction {
-
-
   evict(Map<String, CacheEntry> cache, int startTime, int atLeast) {
     List<CacheEntry> entries = cache.values.toList();
     entries.sort(compare);
@@ -25,7 +23,6 @@ class VolatileEviction extends Eviction {
       }
     }
   }
-
 
   int compare(CacheEntry a, CacheEntry b) {
     if (a.invalid > b.invalid) {

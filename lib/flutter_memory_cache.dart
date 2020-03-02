@@ -1,4 +1,3 @@
-
 library flutter_memory_cache;
 
 export 'src/cache/memory_cache.dart';
