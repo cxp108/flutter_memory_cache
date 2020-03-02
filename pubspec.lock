@@ -135,13 +135,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
-  sorted_list:
-    dependency: "direct main"
-    description:
-      name: sorted_list
-      url: "https://mirrors.tuna.tsinghua.edu.cn/dart-pub"
-    source: hosted
-    version: "0.1.0"
   source_span:
     dependency: transitive
     description:

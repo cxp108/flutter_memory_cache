@@ -1,8 +1,8 @@
 name: flutter_memory_cache
 description: flutter memory cache in Map.
 version: 0.0.1
-author: cxp108@gmail.com
-homepage:
+homepage: https://github.com/cxp108/flutter_memory_cache
+
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -53,3 +53,5 @@ flutter:
   #
   # For details regarding fonts in packages, see
   # https://flutter.dev/custom-fonts/#from-packages
+
+publish_to: https://pub.dev
