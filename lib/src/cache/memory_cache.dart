@@ -29,45 +29,46 @@ class MemoryCache {
   /// use cache default ttl
   put(String key, dynamic value) {
     putWithTTL(key, value, _ttl);
+    _check();
   }
-
-//  _deregisterTTL(String key) {
-//    CacheEntry cacheEntry = _cacheMap[key];
-//    CacheTTL cacheTTL = _ttlMap[cacheEntry.invalid];
-//    if (cacheTTL.isMultiple()) {
-//      cacheTTL.removeKey(key); //多个key的情况下移除一个key
-//    } else {
-//      _ttlMap.remove(cacheTTL.invalid); //这个ttl只有一个key,所以移除整个ttl
-//    }
-//  }
-//
-//  _registerTTL(String key, int invalid) {
-//    if (!_ttlMap.contains(invalid)) {
-//      //ttl里没有这个时间点
-//      CacheTTL cacheTTL = CacheTTL(key, invalid);
-//      _ttlMap[invalid] = cacheTTL;
-//    } else {
-//      _ttlMap[invalid].addKey(key);
-//    }
-//  }
 
   /// use custom ttl
   putWithTTL(String key, dynamic value, int ttl) {
     int invalid = _now() + ttl;
-//    if (_cacheMap.containsKey(key)) {
-//      _deregisterTTL(key);
-//    }
-//    _registerTTL(key, invalid);
+    _putAtTime(key, value, invalid);
+    _check();
+  }
 
+  _putAtTime(String key, dynamic value, int invalid) {
     CacheEntry cacheEntry = CacheEntry(key, value, invalid);
     _cacheMap[key] = cacheEntry;
-    _tryScheduling();
+  }
+
+  int _checkPoint;
+
+  _check() {
+    // to prevent duplicate check
+    if (_cacheMap.length == _checkPoint) {
+      return;
+    } else {
+      _checkPoint = _cacheMap.length;
+    }
+    if (_cacheMap.length > _capacity) {
+      // cache is overflow
+      // cancel the timer to prevent unnecessary evict in timer.
+      _timer.cancel();
+      // evict right now
+      _eviction.evict(_cacheMap, _now(),
+          _policy.evictOrExpand(_cacheMap.length, _capacity));
+    } else {
+      _tryScheduling();
+    }
   }
 
   Timer _timer;
 
   _tryScheduling() {
-    if (_timer != null && _timer.isActive) {
+    if (_cacheMap.isEmpty || (_timer != null && _timer.isActive)) {
       return;
     }
     _timer = Timer.periodic(Duration(seconds: 30), (Timer timer) {
@@ -79,25 +80,29 @@ class MemoryCache {
       if (ret < 0) {
         _eviction.evict(_cacheMap, _now(), ret.abs());
         //如果所有缓存都删除，也要等下一次启动timer时才停止这个timer
+        //timer.cancel();
       }
     });
   }
 
   putAll(Map<String, dynamic> map) {
     putAllWithTTL(map, _ttl);
+    _check();
   }
 
   putAllWithTTL(Map<String, dynamic> map, int ttl) {
+    int invalid = _now() + ttl;
     for (String k in map.keys) {
-      putWithTTL(k, map[k], ttl);
+      _putAtTime(k, map[k], invalid);
     }
+    _check();
   }
 
   get(String key) {
     CacheEntry cacheEntry = _cacheMap[key];
     if (cacheEntry == null) {
       return null;
-    } else if (cacheEntry.invalid < _now()) {
+    } else if (cacheEntry.invalid <= _now()) {
       remove(key);
       return null;
     }
@@ -107,7 +112,6 @@ class MemoryCache {
   remove(String key) {
     _cacheMap.remove(key);
   }
-
 
   double milliSeconds = 1000;
 
