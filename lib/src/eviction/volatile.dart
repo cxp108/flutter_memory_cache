@@ -18,7 +18,7 @@ class VolatileEviction extends Eviction {
           //检查完所有过期时间符合条件的
           break;
         }
-        atLeast--;
+        atLeast--; //可能减到负数
         cache.remove(entry.key);
       }
     }
