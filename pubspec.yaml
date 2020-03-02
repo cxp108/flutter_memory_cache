@@ -1,7 +1,7 @@
 name: flutter_memory_cache
 description: flutter memory cache in Map.
 version: 0.0.1
-author:
+author: cxp108@gmail.com
 homepage:
 
 environment:
@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  system_info: ^0.1.2
+  sorted_list: ^0.1.0
 
 dev_dependencies:
   flutter_test:
