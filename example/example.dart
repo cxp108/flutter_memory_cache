@@ -7,12 +7,15 @@ main() {
   MemoryCache memoryCache = MemoryCache();
   dynamic cache1 = {'name': 'obj1'};
   var cache2 = {'name': 'obj2'};
-  memoryCache.put('obj1', cache1); //default ttl 60 seconds
+  memoryCache.put('cache1', cache1); //default ttl 60 seconds
   memoryCache.putWithTTL(
       'cache2', cache2, 5); //cache2 will be invalidate in 30 seconds
-  sleep(Duration(seconds:6));
-  var ret = memoryCache.get('cache2');//
-  print('ret is $ret');
-  assert (ret == null);
+  sleep(Duration(seconds: 6));
+  var ret = memoryCache.get('cache2'); //
+  print('cache2 is $ret');
+  assert(ret == null);
+  ret = memoryCache.get('cache1');
+  print('cache1 is $ret');
+  assert(ret['name'] == "obj1");
   exit(0);
 }
