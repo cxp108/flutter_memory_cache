@@ -1,5 +1,5 @@
 name: flutter_memory_cache
-description: A cache lib only using memory,Cache using TTL(Time To Live) control,so data can be refreshed after cache invalid.
+description: A cache lib only using memory,it using TTL(Time To Live) control,so data can be refreshed after cache invalid.
 version: 0.0.2
 homepage: https://github.com/cxp108/flutter_memory_cache
 
